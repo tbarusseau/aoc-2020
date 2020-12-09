@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(3)]
-fn a() {}
-
 struct Map {
     pub content: Vec<String>,
     pub width: usize,

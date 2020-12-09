@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(9)]
-fn a() {}
-
 use itertools::Itertools;
 use std::collections::VecDeque;
 

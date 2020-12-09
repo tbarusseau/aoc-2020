@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(1)]
-fn a() {}
-
 use itertools::Itertools;
 
 fn input_generator(input: &str) -> Vec<i32> {

@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(2)]
-fn a() {}
-
 use lazy_static::lazy_static;
 use regex::Regex;
 

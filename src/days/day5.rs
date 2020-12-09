@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(5)]
-fn a() {}
-
 fn compute_row(input: &str) -> usize {
     let mut row: (usize, usize) = (0, 127);
 

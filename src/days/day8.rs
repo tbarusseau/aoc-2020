@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(8)]
-fn a() {}
-
 use aoc_2020::vm::*;
 
 pub fn solve_part1(input: &str) -> isize {

@@ -25,11 +25,12 @@ dependencies = [
  "aoc-runner",
  "aoc-runner-derive",
  "chrono",
- "define_main",
  "itertools",
  "lazy_static",
+ "paste",
  "rayon",
  "regex",
+ "seq-macro",
  "structopt",
 ]
 
@@ -172,10 +173,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "define_main"
-version = "0.1.0"
-
-[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -269,6 +266,12 @@ dependencies = [
  "hermit-abi",
  "libc",
 ]
+
+[[package]]
+name = "paste"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7151b083b0664ed58ed669fcdd92f01c3d2fdbf10af4931a301474950b52bfa9"
 
 [[package]]
 name = "proc-macro-error"
@@ -366,6 +369,12 @@ name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
+
+[[package]]
+name = "seq-macro"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d5b3bd665f328d73d7079123bfbd14a6edd74187667b5c6f340adfc65ea9d25a"
 
 [[package]]
 name = "serde"

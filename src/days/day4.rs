@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(4)]
-fn a() {}
-
 use regex::Regex;
 
 pub struct PassportBuilder {

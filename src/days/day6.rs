@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(6)]
-fn a() {}
-
 use std::collections::{HashMap, HashSet};
 
 pub fn solve_part1(input: &str) -> usize {

@@ -1,7 +1,3 @@
-use define_main::define_main;
-#[define_main(7)]
-fn a() {}
-
 use std::collections::HashMap;
 
 use itertools::Itertools;
