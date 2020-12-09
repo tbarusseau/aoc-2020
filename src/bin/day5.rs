@@ -1,3 +1,7 @@
+use define_main::define_main;
+#[define_main(5)]
+fn a() {}
+
 fn compute_row(input: &str) -> usize {
     let mut row: (usize, usize) = (0, 127);
 
@@ -60,12 +64,10 @@ pub fn test_compute_seat_id() {
     assert_eq!(compute_seat_id("BBFFBBFRLL"), 820);
 }
 
-#[aoc(day5, part1)]
 pub fn solve_part1(input: &str) -> Option<usize> {
     input.lines().map(|s| compute_seat_id(s)).max()
 }
 
-#[aoc(day5, part2)]
 pub fn solve_part2(input: &str) -> Option<usize> {
     let mut v: Vec<usize> = input.lines().map(|s| compute_seat_id(s)).collect();
     v.sort();

@@ -1,3 +1,7 @@
+use define_main::define_main;
+#[define_main(4)]
+fn a() {}
+
 use regex::Regex;
 
 pub struct PassportBuilder {
@@ -180,8 +184,7 @@ impl Passport {
     }
 }
 
-#[aoc_generator(day4)]
-pub fn generate_input(input: &str) -> Vec<Result<Passport, Vec<PassportCreationError>>> {
+fn generate_input(input: &str) -> Vec<Result<Passport, Vec<PassportCreationError>>> {
     let mut v: Vec<Result<Passport, Vec<PassportCreationError>>> = vec![];
     let mut s = String::new();
 
@@ -197,12 +200,14 @@ pub fn generate_input(input: &str) -> Vec<Result<Passport, Vec<PassportCreationE
     v
 }
 
-#[aoc(day4, part1)]
-pub fn solve_part1(input: &[Result<Passport, Vec<PassportCreationError>>]) -> usize {
+pub fn solve_part1(input: &str) -> usize {
+    let input = generate_input(input);
+
     input.iter().filter_map(|i| Result::ok(i.as_ref())).count()
 }
 
-#[aoc(day4, part2)]
-pub fn solve_part2(input: &[Result<Passport, Vec<PassportCreationError>>]) -> usize {
+pub fn solve_part2(input: &str) -> usize {
+    let input = generate_input(input);
+
     input.iter().filter_map(|i| Result::ok(i.as_ref())).count()
 }

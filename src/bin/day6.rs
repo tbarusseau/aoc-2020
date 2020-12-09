@@ -1,6 +1,9 @@
+use define_main::define_main;
+#[define_main(6)]
+fn a() {}
+
 use std::collections::{HashMap, HashSet};
 
-#[aoc(day6, part1)]
 pub fn solve_part1(input: &str) -> usize {
     let mut count = 0_usize;
     let mut m = HashSet::<char>::new();
@@ -29,7 +32,6 @@ fn count_everyone_voted(m: &HashMap<char, usize>, lines: usize) -> usize {
     count
 }
 
-#[aoc(day6, part2)]
 pub fn solve_part2(input: &str) -> usize {
     let mut count = 0_usize;
     let mut lines = 0_usize;

@@ -1,6 +1,9 @@
-use crate::vm::*;
+use define_main::define_main;
+#[define_main(8)]
+fn a() {}
 
-#[aoc(day8, part1)]
+use aoc_2020::vm::*;
+
 pub fn solve_part1(input: &str) -> isize {
     let mut vm = Vm::from(input, false);
 
@@ -21,7 +24,6 @@ fn fix_instruction(op: Op) -> Op {
     }
 }
 
-#[aoc(day8, part2)]
 pub fn solve_part2(input: &str) -> isize {
     let mut vm = Vm::from(input, false);
     let mut fixed = false;

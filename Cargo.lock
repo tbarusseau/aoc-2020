@@ -25,6 +25,7 @@ dependencies = [
  "aoc-runner",
  "aoc-runner-derive",
  "chrono",
+ "define_main",
  "itertools",
  "lazy_static",
  "rayon",
@@ -169,6 +170,10 @@ dependencies = [
  "cfg-if",
  "lazy_static",
 ]
+
+[[package]]
+name = "define_main"
+version = "0.1.0"
 
 [[package]]
 name = "either"

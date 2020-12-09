@@ -1,3 +1,7 @@
+use define_main::define_main;
+#[define_main(7)]
+fn a() {}
+
 use std::collections::HashMap;
 
 use itertools::Itertools;
@@ -51,7 +55,6 @@ fn can_contain_shiny_gold(color: &str, rules: &Rules) -> bool {
     return false;
 }
 
-#[aoc(day7, part1)]
 pub fn solve_part1(input: &str) -> usize {
     let rules = parse_rules(&input);
     rules
@@ -68,7 +71,6 @@ fn count_total_bags(color: &str, rules: &Rules) -> usize {
         + 1
 }
 
-#[aoc(day7, part2)]
 pub fn solve_part2(input: &str) -> usize {
     let rules = parse_rules(&input);
     count_total_bags("shiny gold", &rules) - 1

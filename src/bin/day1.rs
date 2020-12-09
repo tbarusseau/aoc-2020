@@ -1,6 +1,10 @@
+use define_main::define_main;
+#[define_main(1)]
+fn a() {}
+
 use itertools::Itertools;
 
-fn input_generator(input: &str) -> &[i32] {
+fn input_generator(input: &str) -> Vec<i32> {
     input.lines().flat_map(|s| s.parse::<i32>()).collect()
 }
 

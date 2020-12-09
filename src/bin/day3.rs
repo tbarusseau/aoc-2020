@@ -1,4 +1,8 @@
-pub struct Map {
+use define_main::define_main;
+#[define_main(3)]
+fn a() {}
+
+struct Map {
     pub content: Vec<String>,
     pub width: usize,
     pub height: usize,
@@ -56,18 +60,15 @@ impl Map {
     }
 }
 
-#[aoc_generator(day3)]
-pub fn input_generator(input: &str) -> Map {
-    Map::from(input)
-}
+pub fn solve_part1(input: &str) -> usize {
+    let input = Map::from(input);
 
-#[aoc(day3, part1)]
-pub fn solve_part1(input: &Map) -> usize {
     input.part1((3, 1))
 }
 
-#[aoc(day3, part2)]
-pub fn solve_part2(input: &Map) -> usize {
+pub fn solve_part2(input: &str) -> usize {
+    let input = Map::from(input);
+
     [
         input.part1((1, 1)),
         input.part1((3, 1)),

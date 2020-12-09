@@ -1,3 +1,7 @@
+use define_main::define_main;
+#[define_main(2)]
+fn a() {}
+
 use lazy_static::lazy_static;
 use regex::Regex;
 
@@ -26,13 +30,13 @@ pub fn to_password_entry(input: &str) -> PasswordEntry {
     return entry;
 }
 
-#[aoc_generator(day2)]
 pub fn input_generator(input: &str) -> Vec<PasswordEntry> {
     input.lines().map(|l| to_password_entry(l)).collect()
 }
 
-#[aoc(day2, part1)]
-pub fn solve_part1(input: &[PasswordEntry]) -> Option<i32> {
+pub fn solve_part1(input: &str) -> Option<i32> {
+    let input = input_generator(input);
+
     let mut valid_passwords = 0;
 
     input.iter().for_each(|p| {
@@ -61,8 +65,9 @@ pub fn is_valid_pt2(p: &PasswordEntry) -> bool {
         || (char_min != p.letter && char_max == p.letter);
 }
 
-#[aoc(day2, part2)]
-pub fn solve_part2(input: &[PasswordEntry]) -> Option<i32> {
+pub fn solve_part2(input: &str) -> Option<i32> {
+    let input = input_generator(input);
+
     let mut valid_passwords = 0;
 
     input.iter().for_each(|p| {

@@ -1,7 +1,10 @@
+use define_main::define_main;
+#[define_main(9)]
+fn a() {}
+
 use itertools::Itertools;
 use std::collections::VecDeque;
 
-#[aoc(day9, part1)]
 pub fn solve_part1(input: &str) -> usize {
     let input = input
         .lines()
@@ -21,7 +24,6 @@ pub fn solve_part1(input: &str) -> usize {
     }
 }
 
-#[aoc(day9, part2)]
 pub fn solve_part2(input: &str) -> usize {
     let needle: usize = 507_622_668;
 
