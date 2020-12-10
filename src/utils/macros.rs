@@ -11,6 +11,13 @@ macro_rules! aoc_import {
 macro_rules! aoc_match {
     ($opt:expr,$day:literal,$year:literal) => {
         seq_macro::seq! {Day in 1..=$day { paste::paste!{
+
+        use std::borrow::Cow;
+        use async_std::task;
+        use futures::join;
+        use futures::stream::{FuturesUnordered, StreamExt};
+        let mut futures = FuturesUnordered::new();
+
         $opt.days
             .unwrap_or_else(|| panic!("'opt.days' is None"))
             .iter()
@@ -47,11 +54,22 @@ macro_rules! aoc_match {
                         }
                     };
 
-                    println!("Day {}, part 1: {:?}", Day, [<day#Day _solve_part1>](&input));
-                    println!("Day {}, part 2: {:?}", Day, [<day#Day _solve_part2>](&input));
+                    use async_std::task;
+
+                    let s = input.clone();
+                    futures.push(task::spawn(async move {
+                        println!("Day {}, part 1: {:?}", Day, [<day#Day _solve_part1>](&s));
+                    }));
+
+                    let s = input.clone();
+                    futures.push(task::spawn(async move {
+                        println!("Day {}, part 2: {:?}", Day, [<day#Day _solve_part2>](&s));
+                    }));
                 },)*
                 i => panic!("Unavailable day: {}", i),
             });
         }}}
+
+        while let Some(()) = futures.next().await { }
     };
 }

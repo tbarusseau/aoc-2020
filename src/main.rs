@@ -21,7 +21,8 @@ struct Opt {
     days: Option<Vec<u32>>,
 }
 
-fn main() {
+#[async_std::main]
+async fn main() {
     let mut opt = Opt::from_args();
     let today = Local::now().day();
 
