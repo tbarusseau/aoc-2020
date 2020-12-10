@@ -1,6 +1,7 @@
 #![allow(unused)]
 #![allow(dead_code)]
 #![allow(unused_imports)]
+
 mod days;
 use days::*;
 
