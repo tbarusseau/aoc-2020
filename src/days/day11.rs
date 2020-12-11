@@ -14,90 +14,42 @@ pub fn solve_part2(input: &str) -> usize {
         .sum()
 }
 
-fn get_next_in_direction(
-    input: &str,
-    size: (usize, usize),
-    pos: (isize, isize),
-    direction: (isize, isize),
-    remote_check: bool,
-) -> Option<char> {
-    let (posx, posy) = pos;
-    let (directionx, directiony) = direction;
+fn solve(input: &str, remote_check: bool) -> String {
+    let mut change = false;
 
-    let next = (posx.checked_add(directionx), posy.checked_add(directiony));
+    let mut s = step(input, remote_check);
+    loop {
+        let last = s.clone();
+        s = step(&last, remote_check);
 
-    match next {
-        (Some(x), Some(y)) => {
-            if x < 0 || y < 0 {
-                return None;
-            }
-
-            let x = x as usize;
-            let y = y as usize;
-
-            if x >= size.0 || y >= size.1 {
-                return None;
-            }
-
-            match input.lines().nth(y).unwrap().chars().nth(x).unwrap() {
-                '.' => {
-                    if remote_check {
-                        return get_next_in_direction(
-                            input,
-                            size,
-                            (x as isize, y as isize),
-                            direction,
-                            remote_check,
-                        );
-                    } else {
-                        return Some('.');
-                    }
-                }
-                seat @ 'L' | seat @ '#' => return Some(seat),
-                seat @ _ => panic!("Invalid seat: {}", seat),
-            }
+        if s == last {
+            break;
         }
-        _ => return None,
     }
 
-    return None;
+    s
 }
 
-fn get_neighbours(
-    input: &str,
-    pos: (usize, usize),
-    remote_check: bool,
-    size: (usize, usize),
-) -> usize {
-    let mut neighbours = 0;
-    let (pos_x, pos_y) = pos;
+fn step(input: &str, remote_check: bool) -> String {
+    let height = input.lines().count();
+    let width = input
+        .lines()
+        .next()
+        .expect("No lines to step on")
+        .chars()
+        .count();
 
-    let directions = [
-        (-1, -1),
-        (-1, 0),
-        (-1, 1),
-        (0, -1),
-        (0, 1),
-        (1, -1),
-        (1, 0),
-        (1, 1),
-    ];
+    let mut s = String::new();
 
-    directions.iter().for_each(|(x, y)| {
-        if let Some(c) = get_next_in_direction(
-            input,
-            size,
-            (pos_x as isize, pos_y as isize),
-            (*x, *y),
-            remote_check,
-        ) {
-            if c == '#' {
-                neighbours += 1;
-            }
+    for y in 0..height {
+        for x in 0..width {
+            s.push(get_updated_seat(input, x, y, remote_check, (width, height)));
         }
-    });
 
-    neighbours
+        s.push('\n');
+    }
+
+    s.trim_end().to_owned()
 }
 
 fn get_updated_seat(
@@ -147,42 +99,90 @@ fn get_updated_seat(
     }
 }
 
-fn step(input: &str, remote_check: bool) -> String {
-    let height = input.lines().count();
-    let width = input
-        .lines()
-        .next()
-        .expect("No lines to step on")
-        .chars()
-        .count();
+fn get_neighbours(
+    input: &str,
+    pos: (usize, usize),
+    remote_check: bool,
+    size: (usize, usize),
+) -> usize {
+    let mut neighbours = 0;
+    let (pos_x, pos_y) = pos;
 
-    let mut s = String::new();
+    let directions = [
+        (-1, -1),
+        (-1, 0),
+        (-1, 1),
+        (0, -1),
+        (0, 1),
+        (1, -1),
+        (1, 0),
+        (1, 1),
+    ];
 
-    for y in 0..height {
-        for x in 0..width {
-            s.push(get_updated_seat(input, x, y, remote_check, (width, height)));
+    directions.iter().for_each(|(x, y)| {
+        if let Some(c) = get_next_in_direction(
+            input,
+            size,
+            (pos_x as isize, pos_y as isize),
+            (*x, *y),
+            remote_check,
+        ) {
+            if c == '#' {
+                neighbours += 1;
+            }
         }
+    });
 
-        s.push('\n');
-    }
-
-    s.trim_end().to_owned()
+    neighbours
 }
 
-fn solve(input: &str, remote_check: bool) -> String {
-    let mut change = false;
+fn get_next_in_direction(
+    input: &str,
+    size: (usize, usize),
+    pos: (isize, isize),
+    direction: (isize, isize),
+    remote_check: bool,
+) -> Option<char> {
+    let (posx, posy) = pos;
+    let (directionx, directiony) = direction;
 
-    let mut s = step(input, remote_check);
-    loop {
-        let last = s.clone();
-        s = step(&last, remote_check);
+    let next = (posx.checked_add(directionx), posy.checked_add(directiony));
 
-        if s == last {
-            break;
+    match next {
+        (Some(x), Some(y)) => {
+            if x < 0 || y < 0 {
+                return None;
+            }
+
+            let x = x as usize;
+            let y = y as usize;
+
+            if x >= size.0 || y >= size.1 {
+                return None;
+            }
+
+            match input.lines().nth(y).unwrap().chars().nth(x).unwrap() {
+                '.' => {
+                    if remote_check {
+                        return get_next_in_direction(
+                            input,
+                            size,
+                            (x as isize, y as isize),
+                            direction,
+                            remote_check,
+                        );
+                    } else {
+                        return Some('.');
+                    }
+                }
+                seat @ 'L' | seat @ '#' => return Some(seat),
+                seat @ _ => panic!("Invalid seat: {}", seat),
+            }
         }
+        _ => return None,
     }
 
-    s
+    return None;
 }
 
 #[test]
