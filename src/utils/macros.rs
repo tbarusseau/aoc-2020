@@ -12,9 +12,6 @@ macro_rules! aoc_match {
     ($opt:expr,$day:literal,$year:literal) => {
         seq_macro::seq! {Day in 1..=$day { paste::paste!{
 
-        use std::borrow::Cow;
-        use async_std::task;
-        use futures::join;
         use futures::stream::{FuturesUnordered, StreamExt};
         let mut futures = FuturesUnordered::new();
 
@@ -28,10 +25,10 @@ macro_rules! aoc_match {
                         Ok(s) => s,
                         Err(_) => {
                             // Download the input file from adventofcode.com
-                            use std::io::{stdout, Write};
+                            use std::io::Write;
                             use std::fs::OpenOptions;
 
-                            use curl::easy::{Easy, List};
+                            use curl::easy::Easy;
 
                             print!("Downloading input for day {}... ", Day);
                             let mut easy = Easy::new();
@@ -47,8 +44,8 @@ macro_rules! aoc_match {
                                 Ok(data.len())
                             }).unwrap();
                             println!("Done!");
-                            easy.cookie("session=53616c7465645f5f24669579e985604dd998b25e1573ff317d30d1dedb5f72351600515acf3e32647867bfd35607acb1");
-                            let r = easy.perform().unwrap();
+                            easy.cookie("session=53616c7465645f5f24669579e985604dd998b25e1573ff317d30d1dedb5f72351600515acf3e32647867bfd35607acb1").expect("Couldn't set request cookie");
+                            easy.perform().unwrap();
 
                             std::fs::read_to_string(&path).expect("Couldn't read downloaded input")
                         }

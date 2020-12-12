@@ -15,8 +15,6 @@ pub fn solve_part2(input: &str) -> usize {
 }
 
 fn solve(input: &str, remote_check: bool) -> String {
-    let mut change = false;
-
     let mut s = step(input, remote_check);
     loop {
         let last = s.clone();
@@ -181,8 +179,6 @@ fn get_next_in_direction(
         }
         _ => return None,
     }
-
-    return None;
 }
 
 #[test]

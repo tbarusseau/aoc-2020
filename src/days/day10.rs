@@ -77,7 +77,6 @@ pub fn test_1() {
 pub fn solve_part2(input: &str) -> usize {
     use std::collections::HashMap;
 
-    let mut diff: (usize, usize, usize) = (0, 0, 0);
     let mut last: usize = 0;
     let v = clean_input(input);
     let mut r: HashMap<usize, usize> = vec![(0, 1)].into_iter().collect();
