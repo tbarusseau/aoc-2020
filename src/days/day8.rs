@@ -1,37 +1,39 @@
-use aoc_2020::vm::*;
+use aoc_2020::vm::{instruction::Instruction, op::Op::*, *};
+use std::collections::HashSet;
 
-pub fn solve_part1(input: &str) -> isize {
-    let mut vm = Vm::from(input, false);
+pub fn solve_part1(input: &str) -> Result<isize, VmError> {
+    let mut vm = Vm::from(input, false)?;
+    let mut repeat = HashSet::new();
 
-    loop {
-        if vm.step() == VmState::RepeatingInstruction {
-            break;
-        }
+    while !repeat.contains(&vm.ip) {
+        repeat.insert(vm.ip);
+        vm.step();
     }
 
-    vm.acc
+    Ok(vm.acc)
 }
 
-fn fix_instruction(op: Op) -> Op {
-    match op {
-        Op::Jmp(i) => Op::Nop(i),
-        Op::Nop(i) => Op::Jmp(i),
-        _ => op,
-    }
-}
-
-pub fn solve_part2(input: &str) -> isize {
-    let mut vm = Vm::from(input, false);
+pub fn solve_part2(input: &str) -> Result<isize, VmError> {
+    let mut vm = Vm::from(input, false)?;
+    let mut repeat = HashSet::new();
     let mut fixed = false;
     let mut fixed_instructions: Vec<usize> = vec![];
 
     loop {
-        let op = vm.memory[vm.ip];
-        match op {
-            Op::Jmp(_) | Op::Nop(_) => {
-                if !fixed && !fixed_instructions.contains(&vm.ip) {
-                    vm.memory[vm.ip] = fix_instruction(op);
-                    fixed_instructions.push(vm.ip);
+        let index = vm.ip;
+        let instruction = vm.instructions[index];
+        match instruction.op {
+            o @ Jmp | o @ Nop => {
+                if !fixed && !fixed_instructions.contains(&index) {
+                    let mut patched_instruction = Instruction::from(&instruction);
+                    if o == Jmp {
+                        patched_instruction.op = Nop;
+                    } else {
+                        patched_instruction.op = Jmp;
+                    }
+
+                    vm.patch_instruction(index, patched_instruction);
+                    fixed_instructions.push(index);
                     fixed = true;
                 }
             }
@@ -40,9 +42,14 @@ pub fn solve_part2(input: &str) -> isize {
 
         let r = vm.step();
 
-        if r == VmState::RepeatingInstruction && fixed {
-            vm.reset();
-            fixed = false;
+        if repeat.contains(&vm.ip) {
+            if fixed {
+                repeat.clear();
+                vm.reset();
+                fixed = false;
+            }
+        } else {
+            repeat.insert(vm.ip);
         }
 
         if r == VmState::Terminated {
@@ -50,7 +57,7 @@ pub fn solve_part2(input: &str) -> isize {
         }
     }
 
-    vm.acc
+    Ok(vm.acc)
 }
 
 #[test]
