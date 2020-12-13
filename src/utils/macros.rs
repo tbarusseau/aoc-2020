@@ -1,15 +1,15 @@
 /// Import all solutions from day `1` to `n`
 macro_rules! aoc_import {
-    ($day:literal) => {
+    ($year: literal, $day: literal) => {
         seq_macro::seq! {Day in 1..=$day { paste::paste!{
-            use day#Day::{solve_part1 as [<day#Day _solve_part1>], solve_part2 as [<day#Day _solve_part2>]};
+            use [<y $year>]::day#Day::{solve_part1 as [<day#Day _solve_part1>], solve_part2 as [<day#Day _solve_part2>]};
         }}}
     };
 }
 
 /// Generate a `match` statement that that checks `opt.days` from `1` to `n`
 macro_rules! aoc_match {
-    ($opt:expr,$day:literal,$year:literal) => {
+    ($opt: expr, $year: literal, $day: literal) => {
         seq_macro::seq! {Day in 1..=$day { paste::paste!{
 
         use futures::stream::{FuturesUnordered, StreamExt};
