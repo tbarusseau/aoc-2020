@@ -24,7 +24,7 @@ async fn main() {
     let mut opt = Opt::from_args();
     let today = Local::now().day();
 
-    aoc_import!(12);
+    aoc_import!(13);
 
     if opt.all {
         opt.days = Some((1..=today).collect());
@@ -32,5 +32,5 @@ async fn main() {
         opt.days = Some(vec![today]);
     }
 
-    aoc_match!(opt, 12, 2020);
+    aoc_match!(opt, 13, 2020);
 }
