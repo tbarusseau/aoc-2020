@@ -1,4 +1,4 @@
-use std::{collections::HashMap, convert::TryFrom};
+use std::collections::HashMap;
 
 use regex::Regex;
 
@@ -9,26 +9,16 @@ enum Instruction<'a> {
 }
 use Instruction::*;
 
-enum InstructionParsingError {
-    Error,
-}
-
-impl<'a> TryFrom<&'a str> for Instruction<'a> {
-    type Error = InstructionParsingError;
-
-    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
+impl<'a> From<&'a str> for Instruction<'a> {
+    fn from(value: &'a str) -> Self {
         let re = Regex::new(r"^.*\[(?P<address>\d+)\] = (?P<value>\d+)$").unwrap();
         if let Some(c) = re.captures(value) {
-            Ok(Memset(
+            Memset(
                 c.name("address").unwrap().as_str().parse().unwrap(),
                 c.name("value").unwrap().as_str().parse().unwrap(),
-            ))
+            )
         } else {
-            if let Some(s) = value.split(" = ").nth(1) {
-                Ok(Bitmask(s))
-            } else {
-                Err(InstructionParsingError::Error)
-            }
+            Bitmask(value.split(" = ").nth(1).unwrap())
         }
     }
 }
@@ -54,6 +44,89 @@ fn apply_bitmask(value: usize, bitmask: &str) -> usize {
     result
 }
 
+fn decode_memory_address(address: usize, bitmask: &str) -> Vec<usize> {
+    let mut result: Vec<usize> = Vec::with_capacity(32);
+    let mut power = 0_usize;
+
+    // Apply the bitmask
+    let mut value = address;
+    bitmask.chars().rev().for_each(|c| {
+        match c {
+            '1' => {
+                value |= 1 << power;
+            }
+            _ => {}
+        }
+
+        power += 1;
+    });
+
+    power = 0;
+    result.push(value);
+
+    bitmask.chars().rev().for_each(|c| {
+        match c {
+            'X' => {
+                let mut extend = Vec::new();
+                result.iter().for_each(|&v| {
+                    extend.push(v | 1 << power);
+                    extend.push(v & !(1 << power));
+                });
+
+                result = extend;
+            }
+            '0' | '1' => {}
+            _ => panic!("Invalid bitmask value"),
+        }
+
+        power += 1;
+    });
+
+    result
+}
+
+pub fn solve_part1(input: &str) -> usize {
+    let mut memory: HashMap<usize, usize> = HashMap::new();
+    let mut bitmask = String::new();
+
+    input
+        .lines()
+        .map(|l| Instruction::from(l))
+        .for_each(|i| match i {
+            Bitmask(s) => {
+                bitmask = String::from(s);
+            }
+            Memset(address, value) => {
+                memory.insert(address, apply_bitmask(value, &bitmask));
+            }
+        });
+
+    memory.iter().fold(0, |acc, (_, &v)| acc + v)
+}
+
+pub fn solve_part2(input: &str) -> usize {
+    let mut memory: HashMap<usize, usize> = HashMap::new();
+    let mut bitmask = String::new();
+
+    input
+        .lines()
+        .map(|l| Instruction::from(l))
+        .for_each(|i| match i {
+            Bitmask(s) => {
+                bitmask = String::from(s);
+            }
+            Memset(address, value) => {
+                decode_memory_address(address, &bitmask)
+                    .iter()
+                    .for_each(|&address| {
+                        memory.insert(address, value);
+                    });
+            }
+        });
+
+    memory.iter().fold(0, |acc, (_, &v)| acc + v)
+}
+
 #[test]
 pub fn test_bitmasks() {
     assert_eq!(
@@ -65,84 +138,4 @@ pub fn test_bitmasks() {
         101
     );
     assert_eq!(apply_bitmask(0, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X"), 64);
-}
-
-pub fn solve_part1(input: &str) -> usize {
-    let mut memory: HashMap<usize, usize> = HashMap::new();
-    let mut bitmask = String::new();
-
-    input
-        .lines()
-        .flat_map(|l| Instruction::try_from(l))
-        .for_each(|i| match i {
-            Bitmask(s) => {
-                bitmask = unsafe { String::from_utf8_unchecked(s.bytes().collect()) };
-            }
-            Memset(address, value) => {
-                memory.insert(address, apply_bitmask(value, &bitmask));
-            }
-        });
-
-    memory.iter().fold(0, |acc, (_, &v)| acc + v)
-}
-
-// address: 000000000000000000000000000000101010  (decimal 42)
-// mask:    000000000000000000000000000000X1001X
-// result:  000000000000000000000000000000X1101X
-
-//                                             X -> Add in vec: 0 << 0, 1 << 0
-//                                                      Vec: 0, 1
-//                                            1_ -> To all numbers in vec: += 1 << 1
-//                                                      Vec: 0 + 2 = 2, 1 + 2 = 3
-//                                           0__ -> Do nothing
-//                                          0___ -> Do nothing
-//                                         1____ -> To all numbers in vec: += 1 << 4
-//                                                      Vec: 2 + 16 = 18, 3 + 16 = 19
-//                                        X_____ -> For each number n in vec, add in vec: n + 1 << 5, n
-//                                                      Vec: 18, 19, 50, 51
-
-fn decode_memory_address(address: usize, bitmask: &str) -> Vec<usize> {
-    let mut result: Vec<usize> = Vec::with_capacity(32);
-    let mut current_value: usize = 0;
-    let mut power = 0_usize;
-
-    bitmask.chars().rev().for_each(|c| {
-        match c {
-            b @ '0' | b @ '1' => {
-                result.iter_mut().for_each(|v| {
-                    *v += (b.to_digit(10).unwrap() as usize) << power;
-                });
-
-                current_value += (b.to_digit(10).unwrap() as usize) << power;
-            }
-            'X' => {
-                result.push(current_value + 1 << power);
-                result.push(current_value);
-            }
-            _ => panic!("Invalid bitmask value"),
-        }
-
-        power += 1;
-    });
-
-    result
-}
-
-pub fn solve_part2(input: &str) -> usize {
-    let mut memory: HashMap<usize, usize> = HashMap::new();
-    let mut bitmask = String::new();
-
-    input
-        .lines()
-        .flat_map(|l| Instruction::try_from(l))
-        .for_each(|i| match i {
-            Bitmask(s) => {
-                bitmask = unsafe { String::from_utf8_unchecked(s.bytes().collect()) };
-            }
-            Memset(address, value) => {
-                memory.insert(address, apply_bitmask(value, &bitmask));
-            }
-        });
-
-    memory.iter().fold(0, |acc, (_, &v)| acc + v)
 }
