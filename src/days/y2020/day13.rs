@@ -12,7 +12,7 @@ fn generate_input(input: &str) -> (i64, Vec<(i64, i64)>) {
         .expect("Missing buses line")
         .split(',')
         .enumerate()
-        .flat_map(|(i, w)| w.parse::<i64>().and_then(|v| Ok((i as i64, v))))
+        .flat_map(|(i, w)| w.parse::<i64>().map(|v| (i as i64, v)))
         .collect::<Vec<(i64, i64)>>();
 
     (starting_time, buses)

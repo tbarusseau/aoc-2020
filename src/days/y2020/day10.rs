@@ -7,7 +7,7 @@ fn clean_input(input: &str) -> Vec<usize> {
     // Insert built-in jolt adapter
     let max = *v.iter().max().expect("Couldn't find max value");
     v.push(max + 3);
-    v.sort();
+    v.sort_unstable();
 
     v
 }
@@ -22,7 +22,7 @@ pub fn solve_part1(input: &str) -> usize {
             1 => diff.0 += 1,
             2 => diff.1 += 1,
             3 => diff.2 += 1,
-            i @ _ => panic!(
+            i => panic!(
                 "Invalid joltage difference: {}, between {} and {}",
                 i, a, last
             ),

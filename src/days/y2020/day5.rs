@@ -9,7 +9,7 @@ fn compute_row(input: &str) -> usize {
         {
             'B' => row.0 += 2_usize.pow(6 - i as u32),
             'F' => row.1 -= 2_usize.pow(6 - i as u32),
-            c @ _ => panic!("Invalid character: {}", c),
+            c => panic!("Invalid character: {}", c),
         }
     }
 
@@ -35,7 +35,7 @@ fn compute_column(input: &str) -> usize {
         {
             'R' => column.0 += 2_usize.pow(2 - i as u32),
             'L' => column.1 -= 2_usize.pow(2 - i as u32),
-            c @ _ => panic!("Invalid character: {}", c),
+            c => panic!("Invalid character: {}", c),
         }
     }
 
@@ -66,7 +66,7 @@ pub fn solve_part1(input: &str) -> Option<usize> {
 
 pub fn solve_part2(input: &str) -> Option<usize> {
     let mut v: Vec<usize> = input.lines().map(|s| compute_seat_id(s)).collect();
-    v.sort();
+    v.sort_unstable();
 
     let min = *v.get(0).expect("Couldn't get first vector element");
     for (index, v) in v.iter().enumerate() {

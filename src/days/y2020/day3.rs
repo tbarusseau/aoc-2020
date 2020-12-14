@@ -38,18 +38,13 @@ impl Map {
         let mut pos: (usize, usize) = (slope.0, slope.1);
         let mut trees = 0;
 
-        loop {
-            match self.get(pos) {
-                Some(c) => {
-                    if c == '#' {
-                        trees += 1;
-                    }
-
-                    pos.0 += slope.0;
-                    pos.1 += slope.1;
-                }
-                None => break,
+        while let Some(c) = self.get(pos) {
+            if c == '#' {
+                trees += 1;
             }
+
+            pos.0 += slope.0;
+            pos.1 += slope.1;
         }
 
         trees
@@ -73,5 +68,5 @@ pub fn solve_part2(input: &str) -> usize {
         input.part1((1, 2)),
     ]
     .iter()
-    .fold(1, |acc, x| acc * x)
+    .product()
 }

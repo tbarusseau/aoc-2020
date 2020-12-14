@@ -41,11 +41,7 @@ pub fn solve_part2(input: &str) -> usize {
             m.clear();
         } else {
             for c in l.chars() {
-                if m.contains_key(&c) {
-                    m.entry(c).and_modify(|v| *v += 1);
-                } else {
-                    m.insert(c, 1);
-                }
+                m.entry(c).and_modify(|v| *v += 1).or_insert(1);
             }
         }
     });

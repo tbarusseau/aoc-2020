@@ -51,35 +51,33 @@ impl PassportBuilder {
         }
 
         // Validation
-        if self.byr.is_some() {
-            if self.byr.unwrap() < 1920 || self.byr.unwrap() > 2002 {
+        if let Some(byr) = self.byr {
+            if !(1920..=2002).contains(&byr) {
                 err.push(PassportCreationError::InvalidBirthYear);
             }
         }
 
-        if self.iyr.is_some() {
-            if self.iyr.unwrap() < 2010 || self.iyr.unwrap() > 2020 {
+        if let Some(iyr) = self.iyr {
+            if !(2010..=2020).contains(&iyr) {
                 err.push(PassportCreationError::InvalidIssueYear);
             }
         }
 
-        if self.eyr.is_some() {
-            if self.eyr.unwrap() < 2020 || self.eyr.unwrap() > 2030 {
+        if let Some(eyr) = self.eyr {
+            if !(2020..=2030).contains(&eyr) {
                 err.push(PassportCreationError::InvalidExpirationYear);
             }
         }
 
-        if self.hgt.is_some() {
-            let hgt = self.hgt.clone().unwrap();
-
+        if let Some(hgt) = &self.hgt {
             if hgt.ends_with("in") {
                 let v: usize = hgt[..hgt.len() - 2].parse().expect("Invalid 'in' height");
-                if v < 59 || v > 76 {
+                if !(59..=76).contains(&v) {
                     err.push(PassportCreationError::InvalidHeight);
                 }
             } else if hgt.ends_with("cm") {
                 let v: usize = hgt[..hgt.len() - 2].parse().expect("Invalid 'cm' height");
-                if v < 150 || v > 193 {
+                if !(150..=193).contains(&v) {
                     err.push(PassportCreationError::InvalidHeight);
                 }
             } else {
@@ -87,29 +85,27 @@ impl PassportBuilder {
             }
         }
 
-        if self.hcl.is_some() {
+        if let Some(hcl) = &self.hcl {
             let re = Regex::new(r"^#[0-9a-f]{6}$").unwrap();
-            if !re.is_match(&self.hcl.clone().unwrap()) {
+            if !re.is_match(&hcl) {
                 err.push(PassportCreationError::InvalidHairColor);
             }
         }
 
-        if self.ecl.is_some() {
-            if !["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
-                .contains(&&self.ecl.clone().unwrap()[..])
-            {
+        if let Some(ecl) = &self.ecl {
+            if !["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].contains(&&ecl[..]) {
                 err.push(PassportCreationError::InvalidEyeColor);
             }
         }
 
-        if self.pid.is_some() {
+        if let Some(pid) = &self.pid {
             let re = Regex::new(r"^\d{9}$").unwrap();
-            if !re.is_match(&self.pid.clone().unwrap()) {
+            if !re.is_match(&pid) {
                 err.push(PassportCreationError::InvalidPassportId);
             }
         }
 
-        if err.len() != 0 {
+        if !err.is_empty() {
             return Err(err);
         }
 
@@ -158,8 +154,8 @@ pub enum PassportCreationError {
 impl Passport {
     pub fn from(input: &str) -> Result<Passport, Vec<PassportCreationError>> {
         let mut pb = PassportBuilder::new();
-        input[..input.len() - 1].split(" ").for_each(|w| {
-            let mut split = w.split(":");
+        input[..input.len() - 1].split(' ').for_each(|w| {
+            let mut split = w.split(':');
             let key = split.next().expect("Couldn't get key");
             let value = split.next().expect("Couldn't get value");
 

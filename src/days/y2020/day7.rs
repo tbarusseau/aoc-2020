@@ -8,7 +8,7 @@ type Rules = HashMap<Color, Vec<(usize, Color)>>;
 fn parse_rules(input: &str) -> Rules {
     input
         .lines()
-        .filter_map(|line| {
+        .map(|line| {
             let color = line.split_ascii_whitespace().take(2).join(" ");
 
             let contains: Vec<_> = line
@@ -32,7 +32,7 @@ fn parse_rules(input: &str) -> Rules {
                 })
                 .collect();
 
-            Some((color.to_string(), contains))
+            (color, contains)
         })
         .collect()
 }
@@ -48,7 +48,7 @@ fn can_contain_shiny_gold(color: &str, rules: &Rules) -> bool {
         }
     }
 
-    return false;
+    false
 }
 
 pub fn solve_part1(input: &str) -> usize {

@@ -162,22 +162,22 @@ fn get_next_in_direction(
             match input.lines().nth(y).unwrap().chars().nth(x).unwrap() {
                 '.' => {
                     if remote_check {
-                        return get_next_in_direction(
+                        get_next_in_direction(
                             input,
                             size,
                             (x as isize, y as isize),
                             direction,
                             remote_check,
-                        );
+                        )
                     } else {
-                        return Some('.');
+                        Some('.')
                     }
                 }
-                seat @ 'L' | seat @ '#' => return Some(seat),
-                seat @ _ => panic!("Invalid seat: {}", seat),
+                seat @ 'L' | seat @ '#' => Some(seat),
+                seat => panic!("Invalid seat: {}", seat),
             }
         }
-        _ => return None,
+        _ => None,
     }
 }
 

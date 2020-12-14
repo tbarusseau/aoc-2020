@@ -23,7 +23,7 @@ pub fn to_password_entry(input: &str) -> PasswordEntry {
         password: String::from(&capture[4]),
     };
 
-    return entry;
+    entry
 }
 
 pub fn input_generator(input: &str) -> Vec<PasswordEntry> {
@@ -57,8 +57,7 @@ pub fn is_valid_pt2(p: &PasswordEntry) -> bool {
         .nth(p.max - 1)
         .expect("Couldn't get max-index");
 
-    return (char_min == p.letter && char_max != p.letter)
-        || (char_min != p.letter && char_max == p.letter);
+    (char_min == p.letter && char_max != p.letter) || (char_min != p.letter && char_max == p.letter)
 }
 
 pub fn solve_part2(input: &str) -> Option<i32> {
