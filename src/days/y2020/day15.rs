@@ -1,29 +1,29 @@
-use std::collections::HashMap;
-
-fn run(input: &str, stop_index: usize) -> usize {
-    let mut map: HashMap<usize, usize> = HashMap::new();
-    let mut index: usize = 1;
+fn run_vec(input: &str, stop_index: usize) -> usize {
+    let mut v = vec![0; stop_index];
+    let mut index = 1_usize;
     let mut last: usize;
 
     let input = input
         .split(',')
         .flat_map(str::parse::<usize>)
         .collect::<Vec<usize>>();
-    input.iter().take(input.len() - 1).for_each(|n| {
-        map.insert(*n, index);
+    input.iter().take(input.len() - 1).for_each(|&n| {
+        v[n] = index;
         index += 1;
     });
     last = *input.last().unwrap();
 
     while index < stop_index {
-        if map.contains_key(&last) {
-            let new_last = index - map.get(&last).unwrap();
-            map.insert(last, index);
-            last = new_last;
-        } else {
-            map.insert(last, index);
-            last = 0;
-        }
+        last = match v[last] {
+            0 => {
+                v[last] = index;
+                0
+            }
+            i => {
+                v[last] = index;
+                index - i
+            }
+        };
 
         index += 1;
     }
@@ -32,11 +32,11 @@ fn run(input: &str, stop_index: usize) -> usize {
 }
 
 pub fn solve_part1(input: &str) -> usize {
-    run(input, 2020)
+    run_vec(input, 2020)
 }
 
 pub fn solve_part2(input: &str) -> usize {
-    run(input, 30000000)
+    run_vec(input, 30000000)
 }
 
 #[cfg(test)]

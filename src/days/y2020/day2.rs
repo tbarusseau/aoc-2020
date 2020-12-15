@@ -1,7 +1,7 @@
 use lazy_static::lazy_static;
 use regex::Regex;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct PasswordEntry {
     min: usize,
     max: usize,
@@ -74,29 +74,79 @@ pub fn solve_part2(input: &str) -> Option<i32> {
     Some(valid_passwords)
 }
 
-#[test]
-pub fn test_part_2() {
-    assert_eq!(is_valid_pt2(&to_password_entry("1-3 a: abcde")), true);
-    assert_eq!(is_valid_pt2(&to_password_entry("1-3 b: cdefg")), false);
-    assert_eq!(is_valid_pt2(&to_password_entry("2-9 c: ccccccccc")), false);
-    assert_eq!(is_valid_pt2(&to_password_entry("5-7 s: bwkbdlwns")), false);
-    assert_eq!(is_valid_pt2(&to_password_entry("5-6 v: vvvvvc")), true);
-    assert_eq!(
-        is_valid_pt2(&to_password_entry("4-10 f: fffffqsfsffffff")),
-        false
-    );
-    assert_eq!(
-        is_valid_pt2(&to_password_entry("15-16 w: wwwwwwpwwwwwwwww")),
-        false
-    );
-    assert_eq!(is_valid_pt2(&to_password_entry("4-5 x: bsnxd")), true);
-    assert_eq!(is_valid_pt2(&to_password_entry("2-3 v: svvnsnq")), false);
-    assert_eq!(
-        is_valid_pt2(&to_password_entry("13-16 z: zzzzxzzzzzzzczzpz")),
-        false
-    );
-    assert_eq!(
-        is_valid_pt2(&to_password_entry("6-12 t: tctvtvsbkfkzmlf")),
-        false
-    );
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    pub fn test_input_generator() {
+        assert_eq!(
+            input_generator(
+                "1-3 a: abcde
+2-9 c: ccccccccc"
+            ),
+            vec![
+                PasswordEntry {
+                    min: 1,
+                    max: 3,
+                    letter: 'a',
+                    password: "abcde".to_string(),
+                },
+                PasswordEntry {
+                    min: 2,
+                    max: 9,
+                    letter: 'c',
+                    password: "ccccccccc".to_string(),
+                },
+            ]
+        );
+    }
+
+    #[test]
+    pub fn test_part_1() {
+        assert_eq!(
+            solve_part1(
+                "1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc"
+            ),
+            Some(2)
+        );
+    }
+
+    #[test]
+    pub fn test_part_2() {
+        assert_eq!(is_valid_pt2(&to_password_entry("1-3 a: abcde")), true);
+        assert_eq!(is_valid_pt2(&to_password_entry("1-3 b: cdefg")), false);
+        assert_eq!(is_valid_pt2(&to_password_entry("2-9 c: ccccccccc")), false);
+        assert_eq!(is_valid_pt2(&to_password_entry("5-7 s: bwkbdlwns")), false);
+        assert_eq!(is_valid_pt2(&to_password_entry("5-6 v: vvvvvc")), true);
+        assert_eq!(
+            is_valid_pt2(&to_password_entry("4-10 f: fffffqsfsffffff")),
+            false
+        );
+        assert_eq!(
+            is_valid_pt2(&to_password_entry("15-16 w: wwwwwwpwwwwwwwww")),
+            false
+        );
+        assert_eq!(is_valid_pt2(&to_password_entry("4-5 x: bsnxd")), true);
+        assert_eq!(is_valid_pt2(&to_password_entry("2-3 v: svvnsnq")), false);
+        assert_eq!(
+            is_valid_pt2(&to_password_entry("13-16 z: zzzzxzzzzzzzczzpz")),
+            false
+        );
+        assert_eq!(
+            is_valid_pt2(&to_password_entry("6-12 t: tctvtvsbkfkzmlf")),
+            false
+        );
+
+        assert_eq!(
+            solve_part2(
+                "1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc"
+            ),
+            Some(1)
+        );
+    }
 }
