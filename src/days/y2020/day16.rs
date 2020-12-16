@@ -1,5 +1,4 @@
 use regex::Regex;
-use std::collections::HashMap;
 
 #[derive(Debug)]
 struct Pair {
@@ -135,18 +134,33 @@ pub fn solve_part1(input: &str) -> usize {
 pub fn solve_part2(input: &str) -> usize {
     let (rules, my_ticket, nearby_tickets) = generate_input(input);
 
+    // Algorithm:
+    // 1. Only keep the valid tickets (using previous part), in `valid_tickets`.
+    // 2. Create an array containing arrays of the rules' names, example:
+    //  [
+    //      ["seat", "row", "class"],
+    //      ["seat", "row", "class"],
+    //      ["seat", "row", "class"],
+    //  ]
+    //    With as much arrays as there are rules. This array is `possible_rules`.
+    // 3. For each valid ticket, iterate over its values, from `0` to `len - 1`:
+    //      a. The value's index is `i`
+    //      b. Get all the rules broken by this value, i.e. all the rules in which this value cannot fit
+    //      c. For each rule broken by this value, update `possible_rules[i]` by removing said rule
+    // 4. After the previous step, you should have at least one index of `possible_rules`
+    //    which only has a single possible rule.
+    // 5. While there is any rule with more than one element, do the following:
+    //      a. Store the one-rule elements in another temporary collection
+    //      b. For each element in this collection, remove it from the more-than-one-rule elements
+    //      c. Replace the array from 5. with a new one, which contains the one-rule elements, and the updated rest
+
     // Discard invalid tickets
     let valid_tickets: Vec<Vec<usize>> = nearby_tickets
         .into_iter()
         .filter(|t| get_ticket_invalid_value(&rules, &t).is_none())
         .collect();
 
-    // Start with every rule's name as true
-    let mut validated_rules: Vec<HashMap<&str, bool>> = vec![];
-    for _ in 0..valid_tickets.len() {
-        validated_rules.push(rules.iter().map(|r| (r.name, true)).collect());
-    }
-
+    // Assemble `possible_rules`
     let rules_names: Vec<&str> = rules.iter().map(|r| r.name).collect();
     let mut possible_rules: Vec<Vec<&str>> = vec![rules_names.clone(); rules_names.iter().count()];
 
@@ -155,19 +169,20 @@ pub fn solve_part2(input: &str) -> usize {
         t.iter().enumerate().for_each(|(i, v)| {
             get_value_invalid_rules(&rules, *v).iter().for_each(|&r| {
                 possible_rules[i].retain(|&v| v != r);
-                validated_rules[i].entry(r).and_modify(|v| *v = false);
             });
         });
     });
 
-    // Safety check to ensure that the program doesn't go into an infinite loop :)
+    // Safety checks to ensure that the program doesn't go into an infinite loop :)
     if possible_rules.iter().any(|r| r.len() == 0) {
-        panic!("Big issue! One item in possible_rules has no candidate");
+        panic!("One item in possible_rules has no candidate");
+    }
+    if possible_rules.iter().all(|r| r.len() != 1) {
+        panic!("No item in possible_rules has a single candidate");
     }
 
     while possible_rules.iter().any(|l| l.len() > 1) {
         let confirmed_rules: Vec<&str> = possible_rules
-            .clone()
             .iter()
             .filter(|l| l.len() == 1)
             .map(|l| l[0])
@@ -222,11 +237,13 @@ nearby tickets:
         );
     }
 
+    // No full example was provided :'(
     #[test]
     pub fn solve2() {
-        solve_part2(
-            "class: 0-1 or 4-19
-row 0-5 or 8-19
+        assert_eq!(
+            solve_part2(
+                "class: 0-1 or 4-19
+row: 0-5 or 8-19
 seat: 0-13 or 16-19
 
 your ticket:
@@ -235,7 +252,9 @@ your ticket:
 nearby tickets:
 3,9,18
 15,1,5
-5,14,9",
+5,14,9"
+            ),
+            1,
         );
     }
 }
