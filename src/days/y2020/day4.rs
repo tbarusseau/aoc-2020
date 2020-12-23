@@ -156,7 +156,6 @@ impl Passport {
     pub fn from(input: &str) -> Result<Passport, Vec<PassportCreationError>> {
         let mut pb = PassportBuilder::new();
         input[..input.len() - 1].split(' ').for_each(|w| {
-            println!("Word: {:?}", w);
             let mut split = w.split(':');
             let key = split.next().expect("Couldn't get key");
             let value = split.next().expect("Couldn't get value");
